@@ -9,3 +9,59 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model Coin {
+  id        String   @id
+  name      String
+  url       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  countryId String
+  county    Country  @relation(fields: [countryId], references: [id])
+
+  prices Price[]
+  @@map(name: "coins")
+}
+
+model Country {
+  id        String   @id
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  coins     Coin[]
+
+  @@map(name: "countries")
+}
+
+model Price {
+  id         String    @id
+  price      Float
+  coinId     String
+  coin       Coin      @relation(fields: [coinId], references: [id])
+  condition  Condition @default(UNC)
+  currencyId String
+  currency   Currency  @relation(fields: [currencyId], references: [id])
+
+  @@map(name: "prices")
+}
+
+model Currency {
+  id     String  @id
+  name   String
+  code   Int
+  prices Price[]
+
+  @@map(name: "currencies")
+}
+
+enum Condition {
+  G
+  VG
+  F
+  VF
+  XF
+  UNC
+
+  @@map(name: "conditions")
+}
