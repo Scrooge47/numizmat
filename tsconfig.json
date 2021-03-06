@@ -19,7 +19,10 @@
     "jsx": "preserve",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
