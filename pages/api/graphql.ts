@@ -8,6 +8,7 @@ import { Context } from "src/schema/context";
 const server = new ApolloServer({
   schema,
   context: async ({ req }: { req: NextApiRequest }): Promise<Context> => {
+    console.log("req");
     return {
       prisma,
     };

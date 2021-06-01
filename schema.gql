@@ -3,6 +3,209 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input ArrayCode {
+  in: [String!]!
+}
+
+input ArrayNumber {
+  in: [Float!]!
+}
+
+type Coin {
+  count: Int!
+  country: Country!
+  createdAt: DateTime!
+  currency: Currency!
+  current: Boolean!
+  denomination: Float!
+  description: String!
+  id: String!
+  mint: Mint!
+  name: String!
+  nameCollection: NameCollection!
+  publicId: String!
+  updatedAt: DateTime!
+  url: String!
+  year: Int!
+}
+
+input CoinWhereUniqueInput {
+  id: String!
+}
+
+type Collection {
+  coin: Coin!
+  coinId: String!
+  count: Float!
+  user: User!
+  userId: String!
+}
+
+type Country {
+  alfaCode2: String!
+  alfaCode3: String!
+  code: String!
+  iso: String!
+  name: String!
+}
+
+input CountryWhereCodeInput {
+  code: ArrayCode!
+}
+
+input CountryWhereUniqueInput {
+  code: String!
+}
+
+type Currency {
+  alphabeticCode: String!
+  code: String!
+  name: String!
+}
+
+input CurrencyWhereUniqueInput {
+  code: String
+  id: ID
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+input Filters {
+  NameCollection: NameCollectionWhereIdInput
+  country: CountryWhereCodeInput
+}
+
+type ImageSignature {
+  signature: String!
+  timestamp: Int!
+}
+
+input InputCurrency {
+  alphabeticCode: String!
+  code: String!
+  name: String!
+}
+
+input InputMint {
+  country: NestedCountyCreateInput!
+  name: String!
+  shortName: String!
+}
+
+input InputNameCollection {
+  name: String!
+}
+
+type Mint {
+  country: Country!
+  id: Float!
+  name: String!
+  shortName: String!
+}
+
+input MintWhereUniqueInput {
+  id: Float
+}
+
+type Mutation {
+  addCoinToCollection(input: newCollectionInput!): Collection!
+  createCoin(input: NewCoinInput!): Coin!
+  createCountry(input: NewCountryInput!): Country!
+  createCurrency(input: InputCurrency!): Currency!
+  createImageSignature: ImageSignature!
+  createMint(input: InputMint!): Mint!
+  createNameCollection(input: InputNameCollection!): NameCollection!
+  createUser(input: NewUserInput!): User!
+}
+
+type NameCollection {
+  coins: [Coin!]!
+  id: ID!
+  name: String!
+}
+
+input NameCollectionWhereIdInput {
+  id: ArrayNumber!
+}
+
+input NestedCoinCreateInput {
+  connect: CoinWhereUniqueInput!
+}
+
+input NestedCountyCreateInput {
+  connect: CountryWhereUniqueInput!
+}
+
+input NestedCurrencyCreateInput {
+  connect: CurrencyWhereUniqueInput!
+}
+
+input NestedMintCreateInput {
+  connect: MintWhereUniqueInput!
+}
+
+input NestedUserCreateInput {
+  connect: UserWhereUniqueInput!
+}
+
+input NewCoinInput {
+  country: NestedCountyCreateInput!
+  currency: NestedCurrencyCreateInput!
+  current: Boolean!
+  denomination: Float!
+  description: String!
+  mint: NestedMintCreateInput!
+  name: String!
+  url: String!
+  year: Int!
+}
+
+input NewCountryInput {
+  alfaCode2: String!
+  alfaCode3: String!
+  code: String!
+  iso: String!
+  name: String!
+}
+
+input NewUserInput {
+  email: String!
+  password: String!
+}
+
 type Query {
-  hello: String!
+  coin(id: String!): Coin!
+  countries: [Country!]!
+  country(code: String!): Country!
+  currencies: [Currency!]!
+  getCoins(filters: WhereFilters!): [Coin!]!
+  getFiltersFromCoins: [Coin!]!
+  getMints(country: String!): [Mint!]!
+  mints: [Mint!]!
+  nameCollections: [NameCollection!]!
+  searchCountry(search: String!): [Country!]!
+  user(id: String!): User!
+}
+
+type User {
+  email: String!
+  id: String!
+  password: String!
+}
+
+input UserWhereUniqueInput {
+  id: String!
+}
+
+input WhereFilters {
+  where: Filters
+}
+
+input newCollectionInput {
+  coin: NestedCoinCreateInput!
+  count: Int!
+  user: NestedUserCreateInput!
 }

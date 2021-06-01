@@ -10,26 +10,64 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Coin {
-  id        String   @id
-  name      String
-  url       String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  countryId String
-  county    Country  @relation(fields: [countryId], references: [id])
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  password    String
+  collections Collection[]
 
-  prices Price[]
+  @@map("users")
+}
+
+model NameCollection {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  coins Coin[]
+}
+
+model Collection {
+  coinId String
+  userId String
+  count  Int
+  user   User   @relation(fields: [userId], references: [id])
+  coin   Coin   @relation(fields: [coinId], references: [id])
+
+  @@unique([coinId, userId])
+  @@map("collections")
+}
+
+model Coin {
+  id               String          @id @default(uuid())
+  name             String
+  denomination     Float
+  year             Int
+  currencyId       String
+  currency         Currency        @relation(fields: [currencyId], references: [code])
+  url              String          @unique
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @default(now())
+  description      String
+  countryId        String
+  country          Country         @relation(fields: [countryId], references: [code])
+  current          Boolean
+  prices           Price[]
+  mintId           Int?
+  mint             Mint?           @relation(fields: [mintId], references: [id])
+  collections      Collection[]
+  NameCollection   NameCollection? @relation(fields: [nameCollectionId], references: [id])
+  nameCollectionId Int?
+
   @@map(name: "coins")
 }
 
 model Country {
-  id        String   @id
   name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  alfaCode2 String @unique
+  alfaCode3 String @unique
+  code      String @id
+  iso       String @unique
   coins     Coin[]
+  mints     Mint[]
 
   @@map(name: "countries")
 }
@@ -41,18 +79,30 @@ model Price {
   coin       Coin      @relation(fields: [coinId], references: [id])
   condition  Condition @default(UNC)
   currencyId String
-  currency   Currency  @relation(fields: [currencyId], references: [id])
+  currency   Currency  @relation(fields: [currencyId], references: [code])
 
   @@map(name: "prices")
 }
 
 model Currency {
-  id     String  @id
-  name   String
-  code   Int
-  prices Price[]
+  code           String  @id
+  name           String  @unique
+  alphabeticCode String
+  prices         Price[]
+  coins          Coin[]
 
   @@map(name: "currencies")
+}
+
+model Mint {
+  id        Int     @id @default(autoincrement())
+  name      String
+  shortName String
+  country   Country @relation(fields: [countryId], references: [code])
+  countryId String
+  coints    Coin[]
+
+  @@map(name: "mints")
 }
 
 enum Condition {
@@ -62,6 +112,7 @@ enum Condition {
   VF
   XF
   UNC
+  PROOF
 
   @@map(name: "conditions")
 }
