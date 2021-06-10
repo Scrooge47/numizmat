@@ -7,3 +7,8 @@ export interface Filters {
   country: ItemFilter[];
   nameCollection: ItemFilter[];
 }
+
+export interface formatError {
+  path: string;
+  message: string
+}

@@ -172,6 +172,7 @@ input NewCountryInput {
 }
 
 input NewUserInput {
+  confirmPassword: String!
   email: String!
   password: String!
 }
@@ -197,7 +198,8 @@ type User {
 }
 
 input UserWhereUniqueInput {
-  id: String!
+  email: String
+  id: String
 }
 
 input WhereFilters {

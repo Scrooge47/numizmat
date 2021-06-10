@@ -9,11 +9,12 @@ import {
 	Theme,
 } from '@material-ui/core';
 import clsx from 'clsx';
+import UserMenu from 'src/components/UserMenu';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {
 		boxShadow: 'none',
-		background: theme.palette.white,
+		background: theme.palette.primary.main,
 		borderBottom: `1px solid ${colors.grey[200]}`,
 	},
 	flexGrow: {
@@ -37,11 +38,12 @@ const Topbar = () => {
 	return (
 		<AppBar className={classes.root}>
 			<Toolbar disableGutters className={classes.toolbar}>
-				<List>
+				<List className={classes.flexGrow}>
 					<ListItem>
 						<Typography>Коллекции</Typography>
 					</ListItem>
 				</List>
+				<UserMenu />
 			</Toolbar>
 		</AppBar>
 	);
