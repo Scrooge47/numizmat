@@ -1,13 +1,27 @@
 // @flow
-import { Button, Container, Grid, makeStyles, TextField, Typography } from '@material-ui/core';
+import {
+	Button,
+	CircularProgress,
+	Container,
+	Grid,
+	makeStyles,
+	TextField,
+	Typography,
+} from '@material-ui/core';
 import { Theme } from '@material-ui/core/styles';
 import { useForm, Controller } from 'react-hook-form';
 import * as React from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { useMutation } from '@apollo/client';
 import { CREATE_USER } from 'src/graphql/mutations';
 import { signIn } from 'next-auth/client';
+import { registerSchema, loginSchema } from 'src/validation';
+import { NewUserInput, UserInput } from 'src/schema/user';
+import { formatError } from 'src/utils/types';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import * as _ from 'lodash';
+
 type Props = {
 	type: Variant;
 };
@@ -16,31 +30,10 @@ export enum Variant {
 	Login = 'Login',
 	SignUp = 'SignUp',
 }
-
-interface IFormInput {
-	email: string;
-	password: string;
-	passwordConfirm: string;
-}
-
 interface User {
 	id: string;
 	email: string;
 }
-
-interface InputUser {
-	email: string;
-	password: string;
-}
-
-const schema = yup.object().shape({
-	email: yup.string().email().required(),
-	password: yup.string().required(),
-	passwordConfirm: yup.string().when('password', {
-		is: (val: string) => (val && val.length > 0 ? true : false),
-		then: yup.string().oneOf([yup.ref('password')], 'Both passwofrd need to be the same'),
-	}),
-});
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {},
@@ -54,34 +47,59 @@ const useStyles = makeStyles((theme: Theme) => ({
 		maxWidth: 500,
 		margin: `0 auto`,
 	},
+	wrapper: {
+		margin: theme.spacing(1),
+		position: 'relative',
+	},
+	buttonProgress: {
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		marginTop: -12,
+		marginLeft: -12,
+	},
 }));
 
 const AuthForm = ({ type }: Props) => {
-	const [createUser, { data }] = useMutation<{ createUser: User }, { input: InputUser }>(
+	const router = useRouter();
+	const isLoginPage = type === Variant.Login;
+	const validateSchema = isLoginPage ? loginSchema : registerSchema;
+
+	const classes = useStyles();
+	const {
+		handleSubmit,
+		control,
+		setError,
+		formState: { errors, isSubmitting },
+	} = useForm({
+		resolver: yupResolver(validateSchema),
+	});
+
+	const [createUser, { data }] = useMutation<{ createUser: User }, { input: NewUserInput }>(
 		CREATE_USER,
 		{
 			onError(err) {
-				console.log(err);
 				const objErr = err.graphQLErrors[0].extensions;
-				console.log(objErr);
+				for (let key in objErr) {
+					if (_.get(objErr[key], 'path')) {
+						setError(objErr[key].path, { type: 'apollo', message: objErr[key].message });
+					}
+				}
 			},
 			errorPolicy: 'none',
 		},
 	);
-	const classes = useStyles();
-	const {
-		register,
-		handleSubmit,
-		control,
-		formState: { errors },
-	} = useForm({
-		resolver: yupResolver(schema),
-	});
-	const onSubmit = async (data: IFormInput) => {
-		console.log(data);
+
+	const onSubmit = async (data: NewUserInput) => {
 		if (type === Variant.SignUp) {
 			const user = await createUser({
-				variables: { input: { email: data.email, password: data.password } },
+				variables: {
+					input: {
+						email: data.email,
+						password: data.password,
+						confirmPassword: data.confirmPassword,
+					},
+				},
 			});
 		} else {
 			const result = await signIn('credentials', {
@@ -89,10 +107,18 @@ const AuthForm = ({ type }: Props) => {
 				email: data.email,
 				password: data.password,
 			});
-			console.log('result', result);
+			if (result.error) {
+				const errors: formatError[] = JSON.parse(result.error as string);
+				errors.forEach((i) =>
+					setError(i.path as 'string', { type: 'nextAuth', message: i.message }),
+				);
+			}
+			if (!result.error) {
+				router.replace('/');
+			}
 		}
 	};
-	console.log('errors', errors);
+
 	return (
 		<>
 			<div className={classes.formContainer}>
@@ -141,7 +167,7 @@ const AuthForm = ({ type }: Props) => {
 								{type === Variant.SignUp && (
 									<Controller
 										control={control}
-										name="passwordConfirm"
+										name="confirmPassword"
 										defaultValue=""
 										render={({ field }) => (
 											<TextField
@@ -151,17 +177,43 @@ const AuthForm = ({ type }: Props) => {
 												margin="dense"
 												type="password"
 												{...field}
-												error={!!errors?.passwordConfirm}
-												helperText={errors?.passwordConfirm?.message}
+												error={!!errors?.confirmPassword}
+												helperText={errors?.confirmPassword?.message}
 											/>
 										)}
 									/>
 								)}
-
+								<div className={classes.wrapper}>
+									<Grid item xs={12}>
+										<Button
+											type="submit"
+											fullWidth
+											variant="contained"
+											color="primary"
+											disabled={isSubmitting}>
+											{isLoginPage ? 'Войти' : 'Создать'}
+										</Button>
+										{isSubmitting && (
+											<CircularProgress size={24} className={classes.buttonProgress} />
+										)}
+									</Grid>
+								</div>
 								<Grid item xs={12}>
-									<Button type="submit" fullWidth variant="contained" color="primary">
-										Создать
-									</Button>
+									{isLoginPage ? (
+										<Typography variant="subtitle1" color="textSecondary" align="center">
+											Don't have an account?{' '}
+											<Typography component="span" color="primary">
+												<Link href="/signup">Sign up </Link>
+											</Typography>
+										</Typography>
+									) : (
+										<Typography variant="subtitle1" color="textSecondary" align="center">
+											Already have an account?{' '}
+											<Typography component="span" color="primary">
+												<Link href="/login">Login</Link>
+											</Typography>
+										</Typography>
+									)}
 								</Grid>
 							</form>
 						</Grid>
