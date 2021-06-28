@@ -29,6 +29,10 @@ type Coin {
   year: Int!
 }
 
+input CoinFilter {
+  coin: Filters
+}
+
 input CoinWhereUniqueInput {
   id: String!
 }
@@ -50,7 +54,8 @@ type Country {
 }
 
 input CountryWhereCodeInput {
-  code: ArrayCode!
+  code: ArrayCode
+  name: includeFilter
 }
 
 input CountryWhereUniqueInput {
@@ -74,8 +79,11 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 scalar DateTime
 
 input Filters {
+  AND: [Filters!]
   NameCollection: NameCollectionWhereIdInput
+  OR: [Filters!]
   country: CountryWhereCodeInput
+  name: includeFilter
 }
 
 type ImageSignature {
@@ -147,10 +155,6 @@ input NestedMintCreateInput {
   connect: MintWhereUniqueInput!
 }
 
-input NestedUserCreateInput {
-  connect: UserWhereUniqueInput!
-}
-
 input NewCoinInput {
   country: NestedCountyCreateInput!
   currency: NestedCurrencyCreateInput!
@@ -177,13 +181,25 @@ input NewUserInput {
   password: String!
 }
 
+type PreparedFilter {
+  country: [PreparedOneElemFilter!]
+  nameCollection: [PreparedOneElemFilter!]
+}
+
+type PreparedOneElemFilter {
+  id: Float!
+  name: String!
+}
+
 type Query {
   coin(id: String!): Coin!
+  collectionOfUser(filters: CoinFilter): [Collection!]!
   countries: [Country!]!
   country(code: String!): Country!
   currencies: [Currency!]!
   getCoins(filters: WhereFilters!): [Coin!]!
   getFiltersFromCoins: [Coin!]!
+  getFiltersFromCoinsOfUser: PreparedFilter!
   getMints(country: String!): [Mint!]!
   mints: [Mint!]!
   nameCollections: [NameCollection!]!
@@ -197,17 +213,16 @@ type User {
   password: String!
 }
 
-input UserWhereUniqueInput {
-  email: String
-  id: String
-}
-
 input WhereFilters {
   where: Filters
+}
+
+input includeFilter {
+  contains: String!
+  mode: String
 }
 
 input newCollectionInput {
   coin: NestedCoinCreateInput!
   count: Int!
-  user: NestedUserCreateInput!
 }

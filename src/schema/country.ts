@@ -11,7 +11,7 @@ import {
   Arg,
   Ctx,
 } from "type-graphql";
-import { ArrayCode } from "./common";
+import { ArrayCode, includeFilter } from "./common";
 import { Context } from "./context";
 
 @InputType()
@@ -63,10 +63,15 @@ export class Country {
 }
 
 
+
+
 @InputType()
 export class CountryWhereCodeInput {
-  @Field()
-  code: ArrayCode
+  @Field({ nullable: true })
+  code?: ArrayCode
+
+  @Field({ nullable: true })
+  name?: includeFilter
 }
 
 @Resolver()

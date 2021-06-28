@@ -13,3 +13,13 @@ export class ArrayNumber {
 }
 
 
+@InputType()
+export class includeFilter {
+  @Field()
+  contains: string
+
+  @Field({ nullable: true })
+  mode?: string
+}
+
+

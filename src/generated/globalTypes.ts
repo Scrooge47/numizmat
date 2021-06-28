@@ -7,8 +7,20 @@
 // START Enums and Input Objects
 //==============================================================
 
+export interface ArrayCode {
+  in: string[];
+}
+
+export interface ArrayNumber {
+  in: number[];
+}
+
 export interface CoinWhereUniqueInput {
   id: string;
+}
+
+export interface CountryWhereCodeInput {
+  code: ArrayCode;
 }
 
 export interface CountryWhereUniqueInput {
@@ -20,8 +32,17 @@ export interface CurrencyWhereUniqueInput {
   id?: string | null;
 }
 
+export interface Filters {
+  NameCollection?: NameCollectionWhereIdInput | null;
+  country?: CountryWhereCodeInput | null;
+}
+
 export interface MintWhereUniqueInput {
   id?: number | null;
+}
+
+export interface NameCollectionWhereIdInput {
+  id: ArrayNumber;
 }
 
 export interface NestedCoinCreateInput {
@@ -40,10 +61,6 @@ export interface NestedMintCreateInput {
   connect: MintWhereUniqueInput;
 }
 
-export interface NestedUserCreateInput {
-  connect: UserWhereUniqueInput;
-}
-
 export interface NewCoinInput {
   country: NestedCountyCreateInput;
   currency: NestedCurrencyCreateInput;
@@ -57,18 +74,18 @@ export interface NewCoinInput {
 }
 
 export interface NewUserInput {
+  confirmPassword: string;
   email: string;
   password: string;
 }
 
-export interface UserWhereUniqueInput {
-  id: string;
+export interface WhereFilters {
+  where?: Filters | null;
 }
 
 export interface newCollectionInput {
   coin: NestedCoinCreateInput;
   count: number;
-  user: NestedUserCreateInput;
 }
 
 //==============================================================

@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { WhereFilters } from "./globalTypes";
+
 // ====================================================
 // GraphQL query operation: getCoins
 // ====================================================
@@ -42,5 +44,5 @@ export interface getCoins {
 }
 
 export interface getCoinsVariables {
-  filters: string[];
+  filters: WhereFilters;
 }
