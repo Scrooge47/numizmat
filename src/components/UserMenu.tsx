@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { useState } from 'react';
 import { makeStyles, Theme } from '@material-ui/core';
 import { useSession } from 'next-auth/client';
-import { NoEncryption } from '@material-ui/icons';
+import { Session } from 'next-auth';
 import Link from 'next/link';
 import { signOut } from 'next-auth/client';
 
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function UserMenu(props: IProps) {
 	const classes = useStyles();
-	const [session, loading] = useSession();
+	const [session, loading]: [Session | null, boolean] = useSession();
 	const user = session?.user;
 	const [userMenu, setUserMenu] = useState<HTMLButtonElement | null>(null);
 
@@ -94,12 +94,16 @@ function UserMenu(props: IProps) {
 				}}>
 				{user && (
 					<>
-						<MenuItem onClick={userMenuClose} role="button">
-							<ListItemIcon className="min-w-40">
-								<Icon>account_circle</Icon>
-							</ListItemIcon>
-							<ListItemText primary="My Profile" />
-						</MenuItem>
+						<Link href="/account/myCollection">
+							<MenuItem onClick={userMenuClose} role="button">
+								<>
+									<ListItemIcon className="min-w-40">
+										<Icon>account_circle</Icon>
+									</ListItemIcon>
+									<ListItemText primary="My Profile" />
+								</>
+							</MenuItem>
+						</Link>
 						<MenuItem
 							onClick={() => {
 								signOut();

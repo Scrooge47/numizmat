@@ -25,6 +25,19 @@ import { gql } from '@apollo/client'
 //   }
 // `
 
+export const COLLECTION_OF_USER = gql`
+  query collection($filters: CoinFilter!) {
+    collectionOfUser(filters: $filters)  {
+      coin {
+        name
+        count
+        publicId
+        id
+      }
+    }
+  }
+`
+
 export const COINS_QUERY = gql`
   query getCoins($filters: WhereFilters!) {
     getCoins(filters: $filters) {
@@ -49,11 +62,25 @@ export const COINS_QUERY = gql`
   }
 `
 
-export const AVAILABLE_COUNTIES = gql`
+export const AVAILABLE_FILTERS = gql`
  query filters {
   getFiltersFromCoins {
     country {
       code
+      name
+    }
+    nameCollection {
+     id
+     name
+    }
+  }
+ }
+`
+export const AVAILABLE_FILTERS_OF_USER = gql`
+ query filtersOfUser {
+  getFiltersFromCoinsOfUser {
+    country {
+      id
       name
     }
     nameCollection {

@@ -18,6 +18,10 @@ import { Image, Transformation } from 'cloudinary-react';
 import Link from 'next/link';
 import { useMutation } from '@apollo/client';
 import { ADD_COIN_TO_COLLECTION } from 'src/graphql/mutations';
+import {
+	addCoinToCollection,
+	addCoinToCollectionVariables,
+} from 'src/generated/addCoinToCollection';
 
 interface IProps {
 	item: getCoins_getCoins;
@@ -52,7 +56,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OneCoinOfList = ({ item }: IProps) => {
-	const [addCoin, data] = useMutation(ADD_COIN_TO_COLLECTION);
+	const [addCoin, data] =
+		useMutation<addCoinToCollection, addCoinToCollectionVariables>(ADD_COIN_TO_COLLECTION);
 	const classes = useStyles();
 
 	return (
@@ -105,11 +110,6 @@ const OneCoinOfList = ({ item }: IProps) => {
 								addCoin({
 									variables: {
 										input: {
-											user: {
-												connect: {
-													id: '0fc86636-59df-4d33-8260-12cde5c455eb',
-												},
-											},
 											coin: {
 												connect: {
 													id: item.id,

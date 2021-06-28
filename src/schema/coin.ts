@@ -14,13 +14,14 @@ import {
   FieldResolver,
   Root,
   ResolverInterface,
+  Authorized,
 } from "type-graphql";
 import { Context } from "./context";
 import { Country, NestedCountyCreateInput, CountryWhereCodeInput } from './country'
 import { Mint, NestedMintCreateInput } from "./mind";
 import { Currency, NestedCurrencyCreateInput } from "./currency";
 import { NameCollection, NameCollectionWhereIdInput } from "./nameCollection";
-import { type } from "os";
+import { includeFilter } from "./common";
 
 @InputType()
 export class NewCoinInput {
@@ -108,6 +109,21 @@ export class Filters {
 
   @Field({ nullable: true })
   NameCollection?: NameCollectionWhereIdInput
+
+  @Field({ nullable: true })
+  name?: includeFilter
+
+  @Field(type => [Filters], { nullable: true })
+  AND?: Filters[]
+
+  @Field(type => [Filters], { nullable: true })
+  OR?: Filters[]
+}
+
+@InputType()
+export class ORFilter {
+  @Field(type => [Filters])
+  OR: Filters[]
 }
 
 
@@ -137,25 +153,7 @@ export class CoinResolver {
       ...filters
     });
   }
-  // @Query(_returns => [Coin])
-  // async getCoins(@Ctx() ctx: Context, @Arg("filters", type => [String]) filters: string[]) {
-  //   let data = {};
 
-  //   if (filters.length)
-  //     data = {
-  //       where: {
-  //         country: {
-  //           code: {
-  //             in: filters
-  //           }
-  //         }
-  //       }
-  //     }
-
-  //   return await ctx.prisma.coin.findMany({
-  //   ...data
-  // });
-  // }
 
   @Query(_returns => [Coin])
   async getFiltersFromCoins(@Ctx() ctx: Context) {
@@ -180,9 +178,11 @@ export class CoinResolver {
     return coins
   }
 
+  @Authorized()
   @FieldResolver(returns => Int)
   async count(@Root() coin: Coin, @Ctx() ctx: Context) {
 
+    const id = ctx.session?.user.id;
     const modelResponse = await ctx.prisma.coin.findUnique({
       where: {
         id: coin.id
@@ -190,7 +190,7 @@ export class CoinResolver {
       include: {
         collections: {
           where: {
-            userId: "0fc86636-59df-4d33-8260-12cde5c455eb"
+            userId: id
           }
         }
       }

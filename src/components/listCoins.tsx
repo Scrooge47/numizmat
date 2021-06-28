@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 
 import Grid from '@material-ui/core/Grid';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { AVAILABLE_COUNTIES, COINS_QUERY } from 'src/graphql/queries';
+import { AVAILABLE_FILTERS, COINS_QUERY } from 'src/graphql/queries';
 import OneCoinOfList from './oneCoinList';
 import { getCoins } from 'src/generated/getCoins';
 import { filters } from 'src/generated/filters';
@@ -52,7 +52,7 @@ const ListCoins = () => {
 	const [filters, setFilters] = useState<Filters>({ country: [], nameCollection: [] });
 	const [filtersForQuery, setFiltersForQuery] = useState({ country: [], nameCollection: [] });
 
-	const { data: coinsFilters, loading: loadingCountries } = useQuery<filters>(AVAILABLE_COUNTIES);
+	const { data: coinsFilters, loading: loadingCountries } = useQuery<filters>(AVAILABLE_FILTERS);
 
 	const { data, loading } = useQuery<getCoins>(COINS_QUERY, {
 		variables: {
