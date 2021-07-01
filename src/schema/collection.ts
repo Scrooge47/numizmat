@@ -83,8 +83,7 @@ export class CollectionResolver {
   		ON coins.id = "coinId"
   		LEFT JOIN countries
   		ON coins."countryId" = countries.code
-  		WHERE  "userId" = '98237245-42cd-4953-8728-6411e9482ba4'
-
+  		WHERE  "userId" = '${id}'
   		UNION	
 
   		SELECT DISTINCT 'nameCollection', "nameCollectionId", "NameCollection".name  FROM public.collections
@@ -92,7 +91,7 @@ export class CollectionResolver {
   		ON coins.id = "coinId"
   		LEFT JOIN "NameCollection"
   		ON coins."nameCollectionId" = "NameCollection".id
-  		WHERE  "userId" = '98237245-42cd-4953-8728-6411e9482ba4') as filters 
+  		WHERE  "userId" = '${id}') as filters 
   `);
 
     const sortData = data.reduce((prev: PreparedFilter | { [key: string]: PreparedOneElemFilter[] }, i: Filter): PreparedFilter | {} => {
