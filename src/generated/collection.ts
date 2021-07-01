@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { CoinFilter } from "./globalTypes";
+
 // ====================================================
 // GraphQL query operation: collection
 // ====================================================
@@ -22,4 +24,8 @@ export interface collection_collectionOfUser {
 
 export interface collection {
   collectionOfUser: collection_collectionOfUser[];
+}
+
+export interface collectionVariables {
+  filters: CoinFilter;
 }

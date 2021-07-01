@@ -9,6 +9,7 @@ import {
 	Theme,
 } from '@material-ui/core';
 import clsx from 'clsx';
+import Link from 'next/link';
 import UserMenu from 'src/components/UserMenu';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -40,7 +41,9 @@ const Topbar = () => {
 			<Toolbar disableGutters className={classes.toolbar}>
 				<List className={classes.flexGrow}>
 					<ListItem>
-						<Typography>Коллекции</Typography>
+						<Link href="/">
+							<Typography>Коллекции</Typography>
+						</Link>
 					</ListItem>
 				</List>
 				<UserMenu />

@@ -8,23 +8,23 @@
 // ====================================================
 
 export interface filters_getFiltersFromCoins_country {
-  __typename: "Country";
-  code: string;
+  __typename: "PreparedOneElemFilter";
+  id: number;
   name: string;
 }
 
 export interface filters_getFiltersFromCoins_nameCollection {
-  __typename: "NameCollection";
-  id: string;
+  __typename: "PreparedOneElemFilter";
+  id: number;
   name: string;
 }
 
 export interface filters_getFiltersFromCoins {
-  __typename: "Coin";
-  country: filters_getFiltersFromCoins_country;
-  nameCollection: filters_getFiltersFromCoins_nameCollection;
+  __typename: "PreparedFilter";
+  country: filters_getFiltersFromCoins_country[] | null;
+  nameCollection: filters_getFiltersFromCoins_nameCollection[] | null;
 }
 
 export interface filters {
-  getFiltersFromCoins: filters_getFiltersFromCoins[];
+  getFiltersFromCoins: filters_getFiltersFromCoins;
 }

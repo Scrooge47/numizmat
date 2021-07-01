@@ -15,10 +15,12 @@ import {
   ResolverInterface,
   Authorized,
 } from "type-graphql";
-import { Coin, NestedCoinCreateInput, Filters, ORFilter } from "./coin";
-import { includeFilter } from "./common";
+import { Coin, NestedCoinCreateInput, Filters } from "./coin";
+
 import { Context } from "./context";
 import { User } from "./user";
+import { PreparedFilter, PreparedOneElemFilter } from "./common";
+
 
 @ObjectType()
 class Collection {
@@ -32,43 +34,10 @@ class Collection {
   userId: string
 }
 
-@ObjectType()
-class Test {
-  @Field()
-  count: number
-}
-
-@ObjectType()
-class Filter {
-  @Field()
-  name: string
-
-  @Field()
-  type: string
-
-  @Field()
-  id: number
-
-}
-
-@ObjectType()
-class PreparedOneElemFilter {
-  @Field()
-  name: string
-
-  @Field()
-  id: number
-
-}
-@ObjectType()
-class PreparedFilter {
-  [key: string]: PreparedOneElemFilter[]
-
-  @Field(type => [PreparedOneElemFilter], { nullable: true })
-  "country": PreparedOneElemFilter[]
-
-  @Field(type => [PreparedOneElemFilter], { nullable: true })
-  "nameCollection": PreparedOneElemFilter[]
+interface Filter {
+  name: string;
+  type: string;
+  id: number;
 }
 
 @InputType()
@@ -110,23 +79,23 @@ export class CollectionResolver {
     const data = await ctx.prisma.$queryRaw<Filter[]>(`
       SELECT type , id, name FROM
       ( SELECT DISTINCT 'country' as type, CAST("countryId" as int) as id, countries."name" as name FROM public.collections
-			LEFT JOIN coins 
-			ON coins.id = "coinId"
-			LEFT JOIN countries
-			ON coins."countryId" = countries.code
-			WHERE  "userId" = '98237245-42cd-4953-8728-6411e9482ba4'
+  		LEFT JOIN coins 
+  		ON coins.id = "coinId"
+  		LEFT JOIN countries
+  		ON coins."countryId" = countries.code
+  		WHERE  "userId" = '98237245-42cd-4953-8728-6411e9482ba4'
 
-			UNION	
+  		UNION	
 
-			SELECT DISTINCT 'nameCollection', "nameCollectionId", "NameCollection".name  FROM public.collections
-			LEFT JOIN coins 
-			ON coins.id = "coinId"
-			LEFT JOIN "NameCollection"
-			ON coins."nameCollectionId" = "NameCollection".id
-			WHERE  "userId" = '98237245-42cd-4953-8728-6411e9482ba4') as filters 
+  		SELECT DISTINCT 'nameCollection', "nameCollectionId", "NameCollection".name  FROM public.collections
+  		LEFT JOIN coins 
+  		ON coins.id = "coinId"
+  		LEFT JOIN "NameCollection"
+  		ON coins."nameCollectionId" = "NameCollection".id
+  		WHERE  "userId" = '98237245-42cd-4953-8728-6411e9482ba4') as filters 
   `);
 
-    const sortData = data.reduce((prev: PreparedFilter, i): PreparedFilter => {
+    const sortData = data.reduce((prev: PreparedFilter | { [key: string]: PreparedOneElemFilter[] }, i: Filter): PreparedFilter | {} => {
       if (prev[i.type] === undefined) prev[i.type] = [];
       const { id, name } = i;
       console.log(prev[i.type], name);

@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, ObjectType } from "type-graphql";
 
 @InputType()
 export class ArrayCode {
@@ -15,11 +15,29 @@ export class ArrayNumber {
 
 @InputType()
 export class includeFilter {
-  @Field()
-  contains: string
+  @Field({ nullable: true })
+  contains?: string
 
   @Field({ nullable: true })
   mode?: string
 }
 
+@ObjectType()
+export class PreparedOneElemFilter {
+  @Field()
+  name: string
 
+  @Field()
+  id: number
+
+}
+@ObjectType()
+export class PreparedFilter {
+  [key: string]: PreparedOneElemFilter[]
+
+  @Field(type => [PreparedOneElemFilter], { nullable: true })
+  "country": PreparedOneElemFilter[]
+
+  @Field(type => [PreparedOneElemFilter], { nullable: true })
+  "nameCollection": PreparedOneElemFilter[]
+}

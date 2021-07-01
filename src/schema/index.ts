@@ -10,7 +10,7 @@ import { UserResolver } from "./user";
 import { authChecker } from "./auth";
 
 export const schema = buildSchemaSync({
-  resolvers: [UserResolver, CollectionResolver, ImageResolver, CountryResolver, CoinResolver, CurrencyResolver, MintResolver, NameCollectionResolver],
+  resolvers: [UserResolver, CoinResolver, CollectionResolver, ImageResolver, CountryResolver, CurrencyResolver, MintResolver, NameCollectionResolver],
   emitSchemaFile: process.env.NODE_ENV === "development",
   authChecker
 });

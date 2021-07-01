@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
@@ -27,10 +26,10 @@ import {
 import { ADD_COIN_TO_COLLECTION } from 'src/graphql/mutations';
 import FieldAddCoin from '../common/fieldAddCoin';
 import Search from 'src/components/search';
-import { CoinFilter } from 'src/schema/collection';
 import _ from 'lodash';
 import { fill } from '@cloudinary/base/actions/resize';
-import { filterDefault } from 'src/const';
+import parsefiltersForQuery from 'src/utils/parsefiltersForQuery';
+import { Model } from 'src/utils/types';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -145,35 +144,9 @@ const BlogContent = (props: { title: string }) => {
 		</div>
 	);
 };
-
-interface Chip {
-	id: number;
-	name: string;
-	label: string;
-}
-
 interface IProps {
 	className?: string;
 }
-
-const parsefiltersForQuery = (filters: Chip[], inputValue: string): CoinFilter => {
-	const countryCode: string[] = [];
-	const nameCollectionCode: number[] = [];
-
-	filters.map((i) => {
-		if (i.label === 'Страна') countryCode.push('' + i.id);
-		if (i.label === 'Коллекция') nameCollectionCode.push(i.id);
-	});
-
-	const finalFilter = filterDefault(inputValue);
-
-	if (countryCode.length) _.set(finalFilter, 'coin.country.code.in', countryCode);
-
-	if (nameCollectionCode.length)
-		_.set(finalFilter, 'coin.NameCollection.id.in', nameCollectionCode);
-
-	return finalFilter;
-};
 
 const MyCollection = (props: IProps) => {
 	const [chips, setChips] = useState([]);
@@ -181,7 +154,7 @@ const MyCollection = (props: IProps) => {
 
 	const { loading, error, data } = useQuery<collection>(COLLECTION_OF_USER, {
 		variables: {
-			filters: { ...parsefiltersForQuery(chips, inputValue) },
+			filters: { ...parsefiltersForQuery(Model.Collection, chips, inputValue) },
 		},
 	});
 	const { loading: loadingFilters, data: filters } =

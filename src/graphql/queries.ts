@@ -39,7 +39,7 @@ export const COLLECTION_OF_USER = gql`
 `
 
 export const COINS_QUERY = gql`
-  query getCoins($filters: WhereFilters!) {
+  query getCoins($filters: Filters!) {
     getCoins(filters: $filters) {
       id
       name
@@ -66,7 +66,7 @@ export const AVAILABLE_FILTERS = gql`
  query filters {
   getFiltersFromCoins {
     country {
-      code
+      id
       name
     }
     nameCollection {

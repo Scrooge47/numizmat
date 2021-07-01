@@ -22,6 +22,7 @@ import { Mint, NestedMintCreateInput } from "./mind";
 import { Currency, NestedCurrencyCreateInput } from "./currency";
 import { NameCollection, NameCollectionWhereIdInput } from "./nameCollection";
 import { includeFilter } from "./common";
+import { PreparedFilter, PreparedOneElemFilter } from "./common";
 
 @InputType()
 export class NewCoinInput {
@@ -111,26 +112,37 @@ export class Filters {
   NameCollection?: NameCollectionWhereIdInput
 
   @Field({ nullable: true })
-  name?: includeFilter
+  name?: includeFilter | string
 
   @Field(type => [Filters], { nullable: true })
-  AND?: Filters[]
+  AND?: Filters | Filters[]
 
   @Field(type => [Filters], { nullable: true })
   OR?: Filters[]
 }
 
-@InputType()
-export class ORFilter {
-  @Field(type => [Filters])
-  OR: Filters[]
-}
+// @InputType()
+// export class ORFilter {
+//   @Field(type => [Filters])
+//   OR: Filters[]
+// }
 
 
 @InputType()
 export class WhereFilters {
   @Field({ nullable: true })
   where?: Filters
+}
+
+interface Filter {
+  name: string;
+  type: string;
+  id: number;
+}
+
+export interface ItemFilter {
+  name: string;
+  id: number;
 }
 
 
@@ -146,36 +158,62 @@ export class CoinResolver {
     })
   }
 
+
+  @FieldResolver(returns => Country)
+  async country(@Root() coin: Coin, @Ctx() ctx: Context) {
+
+    const modelResponse = await ctx.prisma.coin.findUnique({
+      where: {
+        id: coin.id
+      },
+      include: {
+        country: true
+      }
+    })
+
+    return modelResponse?.country
+  }
+
   @Query(_returns => [Coin])
-  async getCoins(@Ctx() ctx: Context, @Arg("filters") filters: WhereFilters) {
+  async getCoins(@Ctx() ctx: Context, @Arg("filters") filters: Filters) {
 
     return await ctx.prisma.coin.findMany({
-      ...filters
+      where: { ...filters }
     });
   }
 
 
-  @Query(_returns => [Coin])
+  @Query(_returns => PreparedFilter)
   async getFiltersFromCoins(@Ctx() ctx: Context) {
-    const coins = await ctx.prisma.coin.findMany({
-      select: {
-        id: true,
-        country: {
-          select: {
-            code: true,
-            name: true
-          },
+    const data = await ctx.prisma.$queryRaw<Filter[]>(`
+    SELECT type , id, name FROM
+    ( SELECT DISTINCT 'country' as type, CAST("countryId" as int) as id, countries."name" as name FROM public.collections
+    LEFT JOIN coins 
+    ON coins.id = "coinId"
+    LEFT JOIN countries
+    ON coins."countryId" = countries.code
 
-        },
-        NameCollection: {
-          select: {
-            name: true
-          }
-        }
-      },
-      distinct: ['countryId', 'nameCollectionId']
-    })
-    return coins
+    UNION	
+
+    SELECT DISTINCT 'nameCollection', "nameCollectionId", "NameCollection".name  FROM public.collections
+    LEFT JOIN coins 
+    ON coins.id = "coinId"
+    LEFT JOIN "NameCollection"
+    ON coins."nameCollectionId" = "NameCollection".id
+   ) as filters `);
+
+    const sortData = data.reduce((prev: PreparedFilter | { [key: string]: PreparedOneElemFilter[] }, i: Filter): PreparedFilter | {} => {
+      if (prev[i.type] === undefined) prev[i.type] = [];
+      const { id, name } = i;
+      prev[i.type].push({
+        id,
+        name
+      })
+      return prev
+    }, {})
+
+    return sortData
+
   }
 
   @Authorized()
@@ -205,21 +243,6 @@ export class CoinResolver {
 
       data: { ...input }
     })
-  }
-
-  @FieldResolver(returns => Country)
-  async country(@Root() coin: Coin, @Ctx() ctx: Context) {
-
-    const modelResponse = await ctx.prisma.coin.findUnique({
-      where: {
-        id: coin.id
-      },
-      include: {
-        country: true
-      }
-    })
-
-    return modelResponse?.country
   }
 
   @FieldResolver(returns => Mint)

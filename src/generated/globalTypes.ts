@@ -15,12 +15,17 @@ export interface ArrayNumber {
   in: number[];
 }
 
+export interface CoinFilter {
+  coin?: Filters | null;
+}
+
 export interface CoinWhereUniqueInput {
   id: string;
 }
 
 export interface CountryWhereCodeInput {
-  code: ArrayCode;
+  code?: ArrayCode | null;
+  name?: includeFilter | null;
 }
 
 export interface CountryWhereUniqueInput {
@@ -33,8 +38,11 @@ export interface CurrencyWhereUniqueInput {
 }
 
 export interface Filters {
+  AND?: Filters[] | null;
   NameCollection?: NameCollectionWhereIdInput | null;
+  OR?: Filters[] | null;
   country?: CountryWhereCodeInput | null;
+  name?: includeFilter | null;
 }
 
 export interface MintWhereUniqueInput {
@@ -81,6 +89,11 @@ export interface NewUserInput {
 
 export interface WhereFilters {
   where?: Filters | null;
+}
+
+export interface includeFilter {
+  contains: string;
+  mode?: string | null;
 }
 
 export interface newCollectionInput {

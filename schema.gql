@@ -197,8 +197,8 @@ type Query {
   countries: [Country!]!
   country(code: String!): Country!
   currencies: [Currency!]!
-  getCoins(filters: WhereFilters!): [Coin!]!
-  getFiltersFromCoins: [Coin!]!
+  getCoins(filters: Filters!): [Coin!]!
+  getFiltersFromCoins: PreparedFilter!
   getFiltersFromCoinsOfUser: PreparedFilter!
   getMints(country: String!): [Mint!]!
   mints: [Mint!]!
@@ -211,10 +211,6 @@ type User {
   email: String!
   id: String!
   password: String!
-}
-
-input WhereFilters {
-  where: Filters
 }
 
 input includeFilter {

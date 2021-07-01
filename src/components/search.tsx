@@ -4,12 +4,8 @@ import { makeStyles } from '@material-ui/styles';
 import { Chip, Divider, Input, Card, colors, Theme } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SearchIcon from '@material-ui/icons/Search';
-import {
-	filtersOfUser_getFiltersFromCoinsOfUser,
-	filtersOfUser_getFiltersFromCoinsOfUser_country,
-	filtersOfUser_getFiltersFromCoinsOfUser_nameCollection,
-} from 'src/generated/filtersOfUser';
 import MultiSelect from './Multiselect';
+import { Filters, ItemFilter } from 'src/utils/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {},
@@ -69,7 +65,7 @@ interface Chip {
 
 interface IProps {
 	className?: string;
-	filters: filtersOfUser_getFiltersFromCoinsOfUser | undefined;
+	filters: Filters | undefined;
 	chips: Chip[];
 	setChips: Dispatch<SetStateAction<Chip[]>>;
 	inputValue: string;
@@ -91,10 +87,8 @@ const Search = (props: IProps) => {
 	];
 
 	if (!filters) return <div>loading ...</div>;
-	selects[0].options = [...(filters.country as filtersOfUser_getFiltersFromCoinsOfUser_country[])];
-	selects[1].options = [
-		...(filters.nameCollection as filtersOfUser_getFiltersFromCoinsOfUser_nameCollection[]),
-	];
+	selects[0].options = [...(filters.country as ItemFilter[])];
+	selects[1].options = [...(filters.nameCollection as ItemFilter[])];
 
 	selects[0].options = selects[0].options.map((i) => ({ ...i, ...{ label: 'Страна' } }));
 	selects[1].options = selects[1].options.map((i) => ({ ...i, ...{ label: 'Коллекция' } }));
