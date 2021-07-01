@@ -112,7 +112,7 @@ export class Filters {
   NameCollection?: NameCollectionWhereIdInput
 
   @Field({ nullable: true })
-  name?: includeFilter | string
+  name?: includeFilter
 
   @Field(type => [Filters], { nullable: true })
   AND?: Filters | Filters[]

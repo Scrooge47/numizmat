@@ -44,7 +44,7 @@ const ListCoins = () => {
 
 	return (
 		<div className={classes.root}>
-			<Grid item xs={12} spacing={2} className={classes.paper}>
+			<Grid item xs={12} className={classes.paper}>
 				<Search
 					filters={coinsFilters?.getFiltersFromCoins}
 					chips={chips}

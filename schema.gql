@@ -214,7 +214,7 @@ type User {
 }
 
 input includeFilter {
-  contains: String!
+  contains: String
   mode: String
 }
 
