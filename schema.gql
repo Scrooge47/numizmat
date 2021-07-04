@@ -127,6 +127,7 @@ type Mutation {
   createMint(input: InputMint!): Mint!
   createNameCollection(input: InputNameCollection!): NameCollection!
   createUser(input: NewUserInput!): User!
+  favoriteCoin(input: favoriteCoinInput!): Coin!
 }
 
 type NameCollection {
@@ -198,6 +199,7 @@ type Query {
   country(code: String!): Country!
   currencies: [Currency!]!
   getCoins(filters: Filters!): [Coin!]!
+  getFavoriteCoin: [Coin!]!
   getFiltersFromCoins: PreparedFilter!
   getFiltersFromCoinsOfUser: PreparedFilter!
   getMints(country: String!): [Mint!]!
@@ -211,6 +213,11 @@ type User {
   email: String!
   id: String!
   password: String!
+}
+
+input favoriteCoinInput {
+  favoriteState: Boolean!
+  id: String!
 }
 
 input includeFilter {

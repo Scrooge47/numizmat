@@ -134,6 +134,15 @@ export class WhereFilters {
   where?: Filters
 }
 
+@InputType()
+export class favoriteCoinInput {
+  @Field()
+  id: string
+
+  @Field()
+  favoriteState: boolean
+}
+
 interface Filter {
   name: string;
   type: string;
@@ -244,6 +253,36 @@ export class CoinResolver {
       data: { ...input }
     })
   }
+
+  @Authorized()
+  @Mutation(_return => Coin)
+  async favoriteCoin(@Arg('input') input: favoriteCoinInput, @Ctx() ctx: Context) {
+    const UserId = ctx.session?.user.id;
+    const { id, favoriteState } = input;
+    const connectState = favoriteState ? 'connect' : 'disconnect';
+    return ctx.prisma.coin.update({
+      where: { id: input.id },
+      data: {
+        favorites: {
+          [connectState]: { id: UserId }
+        }
+      }
+    })
+  }
+
+  @Authorized()
+  @Query(_return => [Coin])
+  async getFavoriteCoin(@Ctx() ctx: Context) {
+    const UserId = ctx.session?.user.id;
+    const result = await ctx.prisma.user.findUnique({
+      where: {
+        id: UserId
+      }
+    }).favoriteCoins();
+    console.log("result", result);
+    return result
+  }
+
 
   @FieldResolver(returns => Mint)
   async mint(@Root() coin: Coin, @Ctx() ctx: Context) {

@@ -11,10 +11,11 @@ generator client {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  email       String       @unique
-  password    String
-  collections Collection[]
+  id            String       @id @default(uuid())
+  email         String       @unique
+  password      String
+  collections   Collection[]
+  favoriteCoins Coin[]       @relation("CoinUserFavorite")
 
   @@map("users")
 }
@@ -56,6 +57,7 @@ model Coin {
   collections      Collection[]
   NameCollection   NameCollection? @relation(fields: [nameCollectionId], references: [id])
   nameCollectionId Int?
+  favorites        User[]          @relation("CoinUserFavorite")
 
   @@map(name: "coins")
 }
