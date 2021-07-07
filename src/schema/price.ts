@@ -21,7 +21,7 @@ import { Coin } from "./coin";
 import { Context } from "./context";
 import { Currency } from "./currency";
 
-enum Condition {
+export enum Condition {
   G = "G",
   VG = "VG",
   F = "F",
