@@ -3,47 +3,41 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Filters } from "./globalTypes";
-
 // ====================================================
-// GraphQL query operation: getCoins
+// GraphQL query operation: getFavoriteCoin
 // ====================================================
 
-export interface getCoins_getCoins_country {
+export interface getFavoriteCoin_getFavoriteCoin_country {
   __typename: "Country";
   name: string;
 }
 
-export interface getCoins_getCoins_mint {
+export interface getFavoriteCoin_getFavoriteCoin_mint {
   __typename: "Mint";
   name: string;
 }
 
-export interface getCoins_getCoins_currency {
+export interface getFavoriteCoin_getFavoriteCoin_currency {
   __typename: "Currency";
   name: string;
 }
 
-export interface getCoins_getCoins {
+export interface getFavoriteCoin_getFavoriteCoin {
   __typename: "Coin";
   id: string;
   name: string;
-  country: getCoins_getCoins_country;
+  country: getFavoriteCoin_getFavoriteCoin_country;
   publicId: string;
   year: number;
   description: string;
   denomination: number;
-  mint: getCoins_getCoins_mint;
+  mint: getFavoriteCoin_getFavoriteCoin_mint;
   current: boolean;
-  currency: getCoins_getCoins_currency;
+  currency: getFavoriteCoin_getFavoriteCoin_currency;
   count: number;
   favorite: boolean;
 }
 
-export interface getCoins {
-  getCoins: getCoins_getCoins[];
-}
-
-export interface getCoinsVariables {
-  filters: Filters;
+export interface getFavoriteCoin {
+  getFavoriteCoin: getFavoriteCoin_getFavoriteCoin[];
 }

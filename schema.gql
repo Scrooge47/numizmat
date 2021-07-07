@@ -19,6 +19,7 @@ type Coin {
   current: Boolean!
   denomination: Float!
   description: String!
+  favorite: Boolean!
   id: String!
   mint: Mint!
   name: String!

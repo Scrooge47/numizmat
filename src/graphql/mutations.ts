@@ -32,4 +32,13 @@ export const CREATE_USER = gql`
 }
 `
 
+export const CHANGE_FAVORITE = gql`
+ mutation favoriteCoin($input: favoriteCoinInput!) {
+  favoriteCoin(input: $input){
+    id
+    favorite
+  }
+ }
+`
+
 

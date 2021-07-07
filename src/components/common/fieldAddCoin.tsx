@@ -7,6 +7,7 @@ import { DataProxy, MutationFunctionOptions } from '@apollo/client';
 import { COLLECTION_OF_USER } from 'src/graphql/queries';
 import { collection } from 'src/generated/collection';
 import { filterDefault } from 'src/const';
+import { Model } from 'src/utils/types';
 
 interface IProps {
 	item: {
@@ -18,6 +19,7 @@ interface IProps {
 			| MutationFunctionOptions<addCoinToCollection, addCoinToCollectionVariables>
 			| undefined,
 	) => Promise<any>;
+	model: Model;
 }
 
 enum TypeOperation {
@@ -25,11 +27,11 @@ enum TypeOperation {
 	plus,
 }
 
-const FieldAddCoin = ({ item, addCoin }: IProps) => {
+const FieldAddCoin = ({ item, addCoin, model }: IProps) => {
 	const hangleChange = (type: TypeOperation) => {
 		const newCount = type === TypeOperation.minus ? item.count - 1 : item.count + 1;
 		const { id } = item;
-		const defaultFilter = filterDefault('');
+		const defaultFilter = filterDefault('', model);
 		addCoin({
 			variables: {
 				input: {

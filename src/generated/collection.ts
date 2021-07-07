@@ -15,6 +15,7 @@ export interface collection_collectionOfUser_coin {
   count: number;
   publicId: string;
   id: string;
+  favorite: boolean;
 }
 
 export interface collection_collectionOfUser {

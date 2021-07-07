@@ -107,13 +107,13 @@ const AuthForm = ({ type }: Props) => {
 				email: data.email,
 				password: data.password,
 			});
-			if (result.error) {
-				const errors: formatError[] = JSON.parse(result.error as string);
+			if (result?.error) {
+				const errors: formatError[] = JSON.parse(result?.error);
 				errors.forEach((i) =>
 					setError(i.path as 'string', { type: 'nextAuth', message: i.message }),
 				);
 			}
-			if (!result.error) {
+			if (!result?.error) {
 				router.replace('/');
 			}
 		}

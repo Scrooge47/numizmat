@@ -33,6 +33,7 @@ export const COLLECTION_OF_USER = gql`
         count
         publicId
         id
+        favorite
       }
     }
   }
@@ -58,6 +59,7 @@ export const COINS_QUERY = gql`
         name
       }
       count
+      favorite
     }
   }
 `
@@ -137,6 +139,31 @@ query coin($id: String!) {
         code
       }
       count
+      favorite
   }
 }
+`
+export const GET_FAVORITES = gql`
+  query getFavoriteCoin {
+    getFavoriteCoin {
+      id
+        name
+        country{
+          name
+        }
+        publicId
+        year
+        description
+        denomination
+        mint {
+          name
+        }
+        current
+        currency{
+          name
+        }
+        count
+        favorite
+      }
+  }
 `

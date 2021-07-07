@@ -36,6 +36,7 @@ export interface coin_coin {
   current: boolean;
   currency: coin_coin_currency;
   count: number;
+  favorite: boolean;
 }
 
 export interface coin {

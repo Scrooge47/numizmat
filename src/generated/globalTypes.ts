@@ -87,12 +87,13 @@ export interface NewUserInput {
   password: string;
 }
 
-export interface WhereFilters {
-  where?: Filters | null;
+export interface favoriteCoinInput {
+  favoriteState: boolean;
+  id: string;
 }
 
 export interface includeFilter {
-  contains: string;
+  contains?: string | null;
   mode?: string | null;
 }
 

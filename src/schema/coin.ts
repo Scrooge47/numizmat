@@ -242,7 +242,6 @@ export class CoinResolver {
         }
       }
     })
-    console.log(modelResponse?.collections[0]?.count);
     return modelResponse?.collections[0]?.count === undefined ? 0 : modelResponse?.collections[0]?.count
   }
   @Mutation(_returns => Coin)
@@ -260,7 +259,7 @@ export class CoinResolver {
     const UserId = ctx.session?.user.id;
     const { id, favoriteState } = input;
     const connectState = favoriteState ? 'connect' : 'disconnect';
-    return ctx.prisma.coin.update({
+    return await ctx.prisma.coin.update({
       where: { id: input.id },
       data: {
         favorites: {
@@ -279,7 +278,7 @@ export class CoinResolver {
         id: UserId
       }
     }).favoriteCoins();
-    console.log("result", result);
+
     return result
   }
 
@@ -329,5 +328,25 @@ export class CoinResolver {
     return modelResponse?.NameCollection
   }
 
+
+  @Authorized()
+  @FieldResolver(returns => Boolean)
+  async favorite(@Root() coin: Coin, @Ctx() ctx: Context) {
+    const UserId = ctx.session?.user.id;
+    const modelResponse = await ctx.prisma.coin.findUnique({
+      where: {
+        id: coin.id
+      },
+      include: {
+        favorites: {
+          where: {
+            id: UserId
+          }
+        }
+      }
+    })
+
+    return !!modelResponse?.favorites[0]
+  }
 }
 

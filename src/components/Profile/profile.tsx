@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, List, ListItem, Grid, Typography, Card, Theme, CardContent } from '@material-ui/core';
 
 import MyCollection from './MyCollection';
+import Favorite from './Favorite';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {
@@ -70,6 +71,11 @@ const subPages = [
 		title: 'Моя коллекция',
 	},
 	{
+		id: 'favorite',
+		href: '/account/favorite',
+		title: 'Планируемые',
+	},
+	{
 		id: 'settings',
 		href: '/account/settings',
 		title: 'Настройки',
@@ -85,7 +91,7 @@ const TabPanel = (props: IPropsTabPanel) => {
 	const { children, value, index, ...other } = props;
 
 	return (
-		<Box component="div" hidden={value !== index} {...other}>
+		<Box component="div" hidden={value !== index} {...other} width="100%">
 			{value === index && children}
 		</Box>
 	);
@@ -137,6 +143,9 @@ const Profile = () => {
 						<CardContent className={clsx(classes.menuContent)}>
 							<TabPanel value={pageId} index={'myCollection'}>
 								<MyCollection />
+							</TabPanel>
+							<TabPanel value={pageId} index={'favorite'}>
+								<Favorite />
 							</TabPanel>
 							<TabPanel value={pageId} index={'security'}>
 								{/* <Security /> */}
