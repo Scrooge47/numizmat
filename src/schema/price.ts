@@ -16,11 +16,9 @@ import {
   Authorized,
   registerEnumType
 } from "type-graphql";
-import { Coin, NestedCoinCreateInput, Filters } from "./coin";
+import { Coin } from "./coin";
 
 import { Context } from "./context";
-import { User } from "./user";
-import { PreparedFilter, PreparedOneElemFilter } from "./common";
 import { Currency } from "./currency";
 
 enum Condition {
