@@ -23,7 +23,7 @@ import { Currency, NestedCurrencyCreateInput } from "./currency";
 import { NameCollection, NameCollectionWhereIdInput } from "./nameCollection";
 import { includeFilter } from "./common";
 import { PreparedFilter, PreparedOneElemFilter } from "./common";
-
+import { Price } from './price'
 @InputType()
 export class NewCoinInput {
 
@@ -326,6 +326,15 @@ export class CoinResolver {
     })
 
     return modelResponse?.NameCollection
+  }
+
+  @FieldResolver(returns => [Price])
+  async prices(@Root() coin: Coin, @Ctx() ctx: Context) {
+    return await ctx.prisma.coin.findUnique({
+      where: {
+        id: coin.id
+      }
+    }).prices()
   }
 
 

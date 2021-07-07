@@ -75,7 +75,7 @@ model Country {
 }
 
 model Price {
-  id         String    @id
+  id         String    @id @default(uuid())
   price      Float
   coinId     String
   coin       Coin      @relation(fields: [coinId], references: [id])
@@ -83,6 +83,7 @@ model Price {
   currencyId String
   currency   Currency  @relation(fields: [currencyId], references: [code])
 
+  @@unique([coinId, condition, currencyId], name: "Price_coinId_condition_currencyId_key")
   @@map(name: "prices")
 }
 

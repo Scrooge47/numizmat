@@ -24,6 +24,7 @@ type Coin {
   mint: Mint!
   name: String!
   nameCollection: NameCollection!
+  prices: [Price!]!
   publicId: String!
   updatedAt: DateTime!
   url: String!
@@ -44,6 +45,16 @@ type Collection {
   count: Float!
   user: User!
   userId: String!
+}
+
+enum Condition {
+  F
+  G
+  PROOF
+  UNC
+  VF
+  VG
+  XF
 }
 
 type Country {
@@ -121,6 +132,7 @@ input MintWhereUniqueInput {
 
 type Mutation {
   addCoinToCollection(input: newCollectionInput!): Collection!
+  addPrice(input: newPriceInput!): Price!
   createCoin(input: NewCoinInput!): Coin!
   createCountry(input: NewCountryInput!): Country!
   createCurrency(input: InputCurrency!): Currency!
@@ -193,6 +205,16 @@ type PreparedOneElemFilter {
   name: String!
 }
 
+type Price {
+  coin: Coin!
+  coinId: String!
+  condition: Condition!
+  currency: Currency!
+  currencyId: String!
+  id: String!
+  price: Float!
+}
+
 type Query {
   coin(id: String!): Coin!
   collectionOfUser(filters: CoinFilter): [Collection!]!
@@ -206,6 +228,7 @@ type Query {
   getMints(country: String!): [Mint!]!
   mints: [Mint!]!
   nameCollections: [NameCollection!]!
+  prices: [Price!]!
   searchCountry(search: String!): [Country!]!
   user(id: String!): User!
 }
@@ -229,4 +252,11 @@ input includeFilter {
 input newCollectionInput {
   coin: NestedCoinCreateInput!
   count: Int!
+}
+
+input newPriceInput {
+  coinId: String!
+  condition: Condition!
+  currencyId: String!
+  price: Float!
 }
