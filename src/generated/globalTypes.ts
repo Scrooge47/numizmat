@@ -7,6 +7,16 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum Condition {
+  F = "F",
+  G = "G",
+  PROOF = "PROOF",
+  UNC = "UNC",
+  VF = "VF",
+  VG = "VG",
+  XF = "XF",
+}
+
 export interface ArrayCode {
   in: string[];
 }
@@ -100,6 +110,13 @@ export interface includeFilter {
 export interface newCollectionInput {
   coin: NestedCoinCreateInput;
   count: number;
+}
+
+export interface newPriceInput {
+  coinId: string;
+  condition: Condition;
+  currencyId: string;
+  price: number;
 }
 
 //==============================================================

@@ -41,4 +41,15 @@ export const CHANGE_FAVORITE = gql`
  }
 `
 
+export const ADD_PRICE = gql`
+mutation addPrice($input: newPriceInput!) {
+  addPrice(input: $input){
+    coin {
+      prices {
+        condition
+        price
+      }
+  }
+  }
+}`
 

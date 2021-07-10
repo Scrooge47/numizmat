@@ -86,8 +86,29 @@ export class PriceResolver {
   @Mutation((_returns => Price))
   async addPrice(@Arg('input') input: newPriceInput, @Ctx() ctx: Context) {
 
-    return ctx.prisma.price.create({
-      data: {
+    return await ctx.prisma.price.upsert({
+      where: {
+        Price_coinId_condition_currencyId_key: {
+          coinId: input.coinId,
+          condition: input.condition,
+          currencyId: input.currencyId
+        }
+      },
+      create: {
+        coin: {
+          connect: {
+            id: input.coinId
+          }
+        },
+        price: input.price,
+        condition: input.condition,
+        currency: {
+          connect: {
+            code: input.currencyId
+          }
+        }
+      },
+      update: {
         coin: {
           connect: {
             id: input.coinId

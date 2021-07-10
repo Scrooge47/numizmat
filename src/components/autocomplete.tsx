@@ -1,32 +1,52 @@
-import { useLazyQuery } from '@apollo/client';
+import { DocumentNode, useLazyQuery } from '@apollo/client';
 import { CircularProgress, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useEffect, useState } from 'react';
-import { SEARCH_COUNTRIES_QUERY } from 'src/graphql/queries';
+import * as _ from 'lodash';
+import { DeepMap, FieldError } from 'react-hook-form';
+
 interface IProps {
 	label: string;
 	variant?: 'outlined' | 'filled' | 'standard';
-	setSelected(value: CountryType | null): void;
+	setSelected(value: Option | null): void;
+	query: DocumentNode;
+	search: Object;
+	pathOfInputSearch: string;
+	pathOfData: string;
+	pathOfId: 'id' | 'code';
+	errors: DeepMap<Record<string, any>, FieldError>;
+	field: string;
 }
 
-interface CountryType {
+interface Option {
+	[key: string]: any;
 	name: string;
-	code: string;
+	id: string;
 }
 
 const AutocompleteComponent = (props: IProps) => {
-	const { label, variant, setSelected } = props;
+	const {
+		label,
+		variant,
+		query,
+		search,
+		pathOfInputSearch,
+		pathOfData,
+		pathOfId,
+		errors,
+		field,
+		setSelected,
+	} = props;
 	const [open, setOpen] = useState(false);
 	const [inputValue, setInputValue] = useState<string>('');
-	const [loadCountries, { loading, data }] = useLazyQuery(SEARCH_COUNTRIES_QUERY);
-	const [options, setOptions] = useState<CountryType[]>([]);
+
+	const [getData, { loading, data }] = useLazyQuery(query);
+	const [options, setOptions] = useState<Option[]>([]);
 
 	useEffect(() => {
-		(async () => {
-			console.log(inputValue);
-			await loadCountries({ variables: { search: inputValue } });
-			if (data?.searchCountry) setOptions(data?.searchCountry);
-		})();
+		const searchForVariables = _.set(_.cloneDeep(search), pathOfInputSearch, inputValue);
+		getData({ variables: searchForVariables });
+		if (_.get(data, pathOfData)) setOptions(_.get(data, pathOfData));
 	}, [inputValue]);
 
 	return (
@@ -41,7 +61,7 @@ const AutocompleteComponent = (props: IProps) => {
 			onClose={() => {
 				setOpen(false);
 			}}
-			onChange={(_, value) => setSelected(value)}
+			onChange={(_, value) => setSelected(value!?.[pathOfId])}
 			onInputChange={(event, newInputValue) => {
 				setInputValue(newInputValue);
 			}}
@@ -51,6 +71,8 @@ const AutocompleteComponent = (props: IProps) => {
 					label={label}
 					variant={variant}
 					margin="normal"
+					error={!!errors?.[field]}
+					helperText={errors?.[field]?.message}
 					InputProps={{
 						...params.InputProps,
 						endAdornment: (
