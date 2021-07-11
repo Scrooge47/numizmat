@@ -65,7 +65,7 @@ const MyCollection = (props: IProps) => {
 	});
 
 	const coins = data?.collectionOfUser.map((i) => i.coin);
-	console.log('coins', coins);
+
 	return (
 		<div className={clsx(classes.root, className)}>
 			<Grid container spacing={isMd ? 4 : 2} xs>

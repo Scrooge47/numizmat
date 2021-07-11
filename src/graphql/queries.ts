@@ -34,6 +34,14 @@ export const COLLECTION_OF_USER = gql`
         publicId
         id
         favorite
+        prices{
+          condition
+          price
+          currency {
+            code
+            name
+          }
+        }
       }
     }
   }

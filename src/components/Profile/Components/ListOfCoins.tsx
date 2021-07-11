@@ -9,6 +9,11 @@ import {
 	Theme,
 	Typography,
 	colors,
+	Table,
+	TableHead,
+	TableRow,
+	TableCell,
+	TableBody,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { fill } from '@cloudinary/base/actions/resize';
@@ -20,6 +25,7 @@ import {
 	addCoinToCollectionVariables,
 } from 'src/generated/addCoinToCollection';
 import Favorite from 'src/components/common/favorite';
+import { Condition } from 'src/schema/price';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	gridItem: {
@@ -88,6 +94,15 @@ interface Coin {
 	publicId: string;
 	id: string;
 	favorite: boolean;
+	prices: [
+		{
+			price: number;
+			condition: Condition;
+			currency: {
+				name: string;
+			};
+		},
+	];
 }
 
 interface IProps {
@@ -178,6 +193,24 @@ const ListOfCoins = ({ data, addCoin, model }: IProps) => {
 							</CardContent>
 							<FieldAddCoin addCoin={addCoin} item={item} model={model} />
 							<Favorite coin={item} />
+							<Table>
+								<TableHead>
+									<TableRow>
+										<TableCell>Состояние</TableCell>
+										<TableCell align="right">Цена</TableCell>
+										<TableCell>Валюта</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{item.prices.map((price, index) => (
+										<TableRow key={index}>
+											<TableCell>{price.condition}</TableCell>
+											<TableCell>{price.price}</TableCell>
+											<TableCell align="right">{price.currency.name}</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
 						</Card>
 					</Grid>
 				))}
