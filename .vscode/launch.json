@@ -5,13 +5,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach",
-      "port": 9229,
+      "type": "node",
       "request": "attach",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "type": "node"
+      "name": "Launch Program nextjs",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 9229
     },
     {
       "name": "Launch Program",

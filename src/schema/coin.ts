@@ -24,6 +24,7 @@ import { NameCollection, NameCollectionWhereIdInput } from "./nameCollection";
 import { includeFilter } from "./common";
 import { PreparedFilter, PreparedOneElemFilter } from "./common";
 import { Price } from './price'
+
 @InputType()
 export class NewCoinInput {
 
@@ -83,6 +84,9 @@ export class Coin {
 
   @Field(types => Int)
   year: number;
+
+  @Field()
+  NameCollectionId: number
 
   @Field((_type) => String)
   publicId(): string {
@@ -186,11 +190,13 @@ export class CoinResolver {
   @Query(_returns => [Coin])
   async getCoins(@Ctx() ctx: Context, @Arg("filters") filters: Filters) {
 
-    return await ctx.prisma.coin.findMany({
-      where: { ...filters }
-    });
-  }
+    const result = await ctx.prisma.coin.findMany({
+      where: { ...filters },
 
+    });
+
+    return result
+  }
 
   @Query(_returns => PreparedFilter)
   async getFiltersFromCoins(@Ctx() ctx: Context) {
@@ -268,6 +274,8 @@ export class CoinResolver {
       }
     })
   }
+
+
 
   @Authorized()
   @Query(_return => [Coin])

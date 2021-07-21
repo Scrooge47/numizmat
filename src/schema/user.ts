@@ -7,6 +7,7 @@ import {
   Mutation,
   Arg,
   Ctx,
+  Authorized
 } from "type-graphql";
 import { Context } from "./context";
 import { registerSchema } from 'src/validation'
@@ -14,6 +15,8 @@ import { ValidationError } from "yup";
 import { UserInputError } from 'apollo-server-micro'
 import { formatYupError } from 'src/utils/formatYupErrors'
 import bcrypt from 'bcrypt';
+import { NameCollection } from "./nameCollection";
+import * as _ from 'lodash'
 @InputType()
 export class NewUserInput {
   @Field()
@@ -47,6 +50,19 @@ export class User {
   @Field()
   password: string;
 }
+
+@ObjectType()
+export class DataUserCollection {
+  @Field()
+  nameCollection: NameCollection;
+
+  @Field()
+  totalCoin: number;
+
+  @Field()
+  numberCoinOfUser: number;
+}
+
 
 @InputType()
 export class UserWhereUniqueInput {
@@ -109,6 +125,52 @@ export class UserResolver {
       throw new Error(e.message)
     }
 
+  }
+
+  @Authorized()
+  @Query(returns => [DataUserCollection])
+  async userInfoCoin(@Ctx() ctx: Context) {
+
+    const UserId = ctx.session?.user.id;
+
+    const numberCoinOfUser = await ctx.prisma.coin.groupBy({
+      by: ['nameCollectionId'],
+
+      where: {
+        collections: {
+          some: {
+            userId: UserId
+          }
+        }
+      },
+      _count: {
+        nameCollectionId: true
+      },
+
+    });
+
+    const totalCoin = await ctx.prisma.coin.groupBy({
+      by: ['nameCollectionId'],
+      _count: {
+        nameCollectionId: true
+      }
+    })
+
+    const dataUser = await Promise.all(totalCoin.map(async (i) => {
+      const nameCollection = await ctx.prisma.nameCollection.findUnique({
+        where: {
+          id: i.nameCollectionId
+        }
+      });
+      const item = { nameCollection, numberCoinOfUser: 0, totalCoin: i._count.nameCollectionId };
+      const Index = _.findIndex(numberCoinOfUser, { nameCollectionId: i.nameCollectionId });
+      if (Index != -1) {
+        item.numberCoinOfUser = numberCoinOfUser[Index]._count.nameCollectionId
+      }
+      return item
+    }))
+
+    return dataUser
   }
 }
 

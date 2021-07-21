@@ -12,6 +12,7 @@ input ArrayNumber {
 }
 
 type Coin {
+  NameCollectionId: Float!
   count: Int!
   country: Country!
   createdAt: DateTime!
@@ -85,6 +86,12 @@ input CurrencyWhereUniqueInput {
   id: ID
 }
 
+type DataUserCollection {
+  nameCollection: NameCollection!
+  numberCoinOfUser: Float!
+  totalCoin: Float!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -145,6 +152,7 @@ type Mutation {
 
 type NameCollection {
   coins: [Coin!]!
+  countCoins: Float!
   id: ID!
   name: String!
 }
@@ -231,6 +239,7 @@ type Query {
   prices: [Price!]!
   searchCountry(search: String!): [Country!]!
   user(id: String!): User!
+  userInfoCoin: [DataUserCollection!]!
 }
 
 type User {

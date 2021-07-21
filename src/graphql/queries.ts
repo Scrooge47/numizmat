@@ -175,3 +175,14 @@ export const GET_FAVORITES = gql`
       }
   }
 `
+export const GET_DATA_USER_COIN = gql`
+   query userInfoCoin {
+    userInfoCoin {
+      nameCollection {
+        name
+      }
+      totalCoin
+      numberCoinOfUser
+    }
+   }  
+`

@@ -20,6 +20,7 @@ import { Coin, NestedCoinCreateInput, Filters } from "./coin";
 import { Context } from "./context";
 import { User } from "./user";
 import { PreparedFilter, PreparedOneElemFilter } from "./common";
+import { result } from "lodash";
 
 
 @ObjectType()
@@ -61,15 +62,17 @@ export class CollectionResolver {
   @Query(_return => [Collection])
   async collectionOfUser(@Ctx() ctx: Context, @Arg("filters", { nullable: true }) filters?: CoinFilter) {
     const id = ctx.session?.user.id as string;
-    return await ctx.prisma.collection.findMany({
+    const result = await ctx.prisma.collection.findMany({
       where: {
         user: {
           id
         },
         ...filters
-      }
+      },
     })
 
+    console.log("result", result);
+    return result
   }
 
   @Authorized()

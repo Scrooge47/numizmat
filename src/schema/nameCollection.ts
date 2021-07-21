@@ -24,13 +24,16 @@ export class NameCollection {
 
   @Field()
   name: string
+
 }
 
 @Resolver(of => NameCollection)
 export class NameCollectionResolver {
   @Query(_returns => [NameCollection])
   async nameCollections(@Ctx() ctx: Context) {
-    return await ctx.prisma.nameCollection.findMany()
+    return await ctx.prisma.nameCollection.findMany({
+
+    })
   }
 
   @FieldResolver(_returns => [Coin])
@@ -44,6 +47,18 @@ export class NameCollectionResolver {
       }
     })
     return modelResponse?.coins
+  }
+
+  @FieldResolver(returns => Number)
+  async countCoins(@Root() nameCollection: NameCollection, @Ctx() ctx: Context) {
+    const result = await ctx.prisma.coin.count({
+      where: {
+        nameCollectionId: nameCollection.id
+      },
+
+    })
+
+    return result;
   }
 
   @Mutation(_return => NameCollection)
