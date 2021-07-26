@@ -6,7 +6,7 @@ const PlusMinusButtons = ({ counter, handleIncrement, handleDecrement }) => {
 	const displayCounter = counter > 0;
 
 	return (
-		<ButtonGroup size="small" aria-label="small outlined button group">
+		<ButtonGroup orientation="horizontal" size="small" aria-label="small outlined button group">
 			<Button onClick={handleIncrement}>+</Button>
 			{/* {displayCounter && <Button disabled>{counter}</Button>}
 			{displayCounter && <Button onClick={handleDecrement}>-</Button>} */}

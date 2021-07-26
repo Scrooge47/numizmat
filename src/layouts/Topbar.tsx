@@ -7,6 +7,7 @@ import {
 	colors,
 	makeStyles,
 	Theme,
+	Button,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -42,7 +43,9 @@ const Topbar = () => {
 				<List className={classes.flexGrow}>
 					<ListItem>
 						<Link href="/">
-							<Typography>Коллекции</Typography>
+							<Button color="inherit">
+								<Typography>Коллекции</Typography>
+							</Button>
 						</Link>
 					</ListItem>
 				</List>

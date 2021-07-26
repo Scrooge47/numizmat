@@ -25,3 +25,13 @@ export enum Model {
   Coin,
   Collection
 }
+
+export enum Condition {
+  G = "G",
+  VG = "VG",
+  F = "F",
+  VF = "VF",
+  XF = "XF",
+  UNC = "UNC",
+  PROOF = "PROOF"
+}

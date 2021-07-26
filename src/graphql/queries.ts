@@ -41,6 +41,7 @@ export const COLLECTION_OF_USER = gql`
             code
             name
           }
+          count
         }
       }
     }
@@ -68,6 +69,15 @@ export const COINS_QUERY = gql`
       }
       count
       favorite
+      prices{
+          condition
+          price
+          currency {
+            code
+            name
+          }
+          count
+        }
     }
   }
 `

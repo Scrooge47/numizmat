@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Filters } from "./globalTypes";
+import { Filters, Condition } from "./globalTypes";
 
 // ====================================================
 // GraphQL query operation: getCoins
@@ -24,6 +24,20 @@ export interface getCoins_getCoins_currency {
   name: string;
 }
 
+export interface getCoins_getCoins_prices_currency {
+  __typename: "Currency";
+  code: string;
+  name: string;
+}
+
+export interface getCoins_getCoins_prices {
+  __typename: "Price";
+  condition: Condition;
+  price: number;
+  currency: getCoins_getCoins_prices_currency;
+  count: number;
+}
+
 export interface getCoins_getCoins {
   __typename: "Coin";
   id: string;
@@ -38,6 +52,7 @@ export interface getCoins_getCoins {
   currency: getCoins_getCoins_currency;
   count: number;
   favorite: boolean;
+  prices: getCoins_getCoins_prices[];
 }
 
 export interface getCoins {

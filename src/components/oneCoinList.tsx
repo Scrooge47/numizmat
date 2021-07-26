@@ -10,6 +10,11 @@ import {
 	Grid,
 	Input,
 	makeStyles,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
 	TextField,
 	Typography,
 } from '@material-ui/core';
@@ -22,6 +27,8 @@ import {
 	addCoinToCollection,
 	addCoinToCollectionVariables,
 } from 'src/generated/addCoinToCollection';
+import FieldAddCoin from './common/fieldAddCoin';
+import { Model } from 'src/utils/types';
 
 interface IProps {
 	item: getCoins_getCoins;
@@ -94,7 +101,7 @@ const OneCoinOfList = ({ item }: IProps) => {
 				</Typography>
 			</CardContent>
 			<CardActions>
-				<Grid container direction="row" justify="space-between">
+				{/* <Grid container direction="row" justify="space-between">
 					<Grid item>
 						<Box fontWeight="500" color="text.primary" fontSize="body2.fontSize" component="span">
 							Количество монет:
@@ -122,10 +129,38 @@ const OneCoinOfList = ({ item }: IProps) => {
 							}
 						/>
 					</Grid>
-				</Grid>
+				</Grid> */}
 				{/* <Button size="small">
 					<Link href={`/coins/${item.id}/edit`}>Редактировать</Link>
 				</Button> */}
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Состояние</TableCell>
+							<TableCell align="right">Цена</TableCell>
+							<TableCell align="center">Количество</TableCell>
+							{/* <TableCell>В</TableCell> */}
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{item.prices.map((price, index) => (
+							<TableRow key={index}>
+								<TableCell>{price.condition}</TableCell>
+								<TableCell align="right">{price.price}</TableCell>
+								<TableCell align="center">
+									<FieldAddCoin
+										addCoin={addCoin}
+										item={item}
+										model={Model.Coin}
+										condition={price.condition}
+										count={price.count}
+									/>
+								</TableCell>
+								{/* <TableCell align="right">{price.currency.name}</TableCell> */}
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
 			</CardActions>
 		</Card>
 	);

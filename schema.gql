@@ -43,6 +43,7 @@ input CoinWhereUniqueInput {
 type Collection {
   coin: Coin!
   coinId: String!
+  condition: Condition!
   count: Float!
   user: User!
   userId: String!
@@ -217,6 +218,7 @@ type Price {
   coin: Coin!
   coinId: String!
   condition: Condition!
+  count: Float!
   currency: Currency!
   currencyId: String!
   id: String!
@@ -260,6 +262,7 @@ input includeFilter {
 
 input newCollectionInput {
   coin: NestedCoinCreateInput!
+  condition: Condition!
   count: Int!
 }
 

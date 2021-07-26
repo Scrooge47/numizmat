@@ -18,14 +18,13 @@ import {
 import clsx from 'clsx';
 import { fill } from '@cloudinary/base/actions/resize';
 import FieldAddCoin from 'src/components/common/fieldAddCoin';
-import { Model } from 'src/utils/types';
+import { Condition, Model } from 'src/utils/types';
 import { MutationFunctionOptions } from '@apollo/client';
 import {
 	addCoinToCollection,
 	addCoinToCollectionVariables,
 } from 'src/generated/addCoinToCollection';
 import Favorite from 'src/components/common/favorite';
-import { Condition } from 'src/schema/price';
 
 const useStyles = makeStyles((theme: Theme) => ({
 	gridItem: {
@@ -101,6 +100,7 @@ interface Coin {
 			currency: {
 				name: string;
 			};
+			count: number;
 		},
 	];
 }
@@ -191,14 +191,21 @@ const ListOfCoins = ({ data, addCoin, model }: IProps) => {
 								{' '}
 								<BlogContent title={item.name} />
 							</CardContent>
-							<FieldAddCoin addCoin={addCoin} item={item} model={model} />
+							<FieldAddCoin
+								addCoin={addCoin}
+								item={item}
+								model={model}
+								condition={Condition.G}
+								count={item.count}
+							/>
 							<Favorite coin={item} />
 							<Table>
 								<TableHead>
 									<TableRow>
 										<TableCell>Состояние</TableCell>
-										<TableCell align="right">Цена</TableCell>
-										<TableCell>Валюта</TableCell>
+										<TableCell align="center">Цена</TableCell>
+										<TableCell align="right">К-во</TableCell>
+										{/* <TableCell>В</TableCell> */}
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -206,7 +213,16 @@ const ListOfCoins = ({ data, addCoin, model }: IProps) => {
 										<TableRow key={index}>
 											<TableCell>{price.condition}</TableCell>
 											<TableCell>{price.price}</TableCell>
-											<TableCell align="right">{price.currency.name}</TableCell>
+											<TableCell>
+												<FieldAddCoin
+													addCoin={addCoin}
+													item={item}
+													model={model}
+													condition={price.condition}
+													count={price.count}
+												/>
+											</TableCell>
+											{/* <TableCell align="right">{price.currency.name}</TableCell> */}
 										</TableRow>
 									))}
 								</TableBody>

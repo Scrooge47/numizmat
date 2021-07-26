@@ -109,6 +109,7 @@ export interface includeFilter {
 
 export interface newCollectionInput {
   coin: NestedCoinCreateInput;
+  condition: Condition;
   count: number;
 }
 

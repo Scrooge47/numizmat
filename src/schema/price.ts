@@ -1,3 +1,4 @@
+import { Condition } from "src/utils/types";
 import {
   ObjectType,
   InputType,
@@ -21,15 +22,6 @@ import { Coin } from "./coin";
 import { Context } from "./context";
 import { Currency } from "./currency";
 
-export enum Condition {
-  G = "G",
-  VG = "VG",
-  F = "F",
-  VF = "VF",
-  XF = "XF",
-  UNC = "UNC",
-  PROOF = "PROOF"
-}
 
 registerEnumType(Condition, {
   name: "Condition", // this one is mandatory
@@ -51,6 +43,7 @@ export class Price {
 
   @Field(type => Condition, { nullable: false })
   condition: Condition
+
 }
 
 
@@ -76,10 +69,13 @@ export class PriceResolver {
   //@Authorized()
   @Query(_return => [Price])
   async prices(@Ctx() ctx: Context) {
-
-    return await ctx.prisma.price.findMany({
+    const UserId = ctx.session?.user.id;
+    const result = await ctx.prisma.price.findMany({
 
     })
+
+    console.log("result", result);
+    return result;
 
   }
 
@@ -147,6 +143,23 @@ export class PriceResolver {
     })
 
     return modelResponse
+  }
+
+  @Authorized()
+  @FieldResolver(returns => Number)
+  async count(@Root() price: Price, @Ctx() ctx: Context) {
+    const userId = ctx.session?.user.id;
+    const result = await ctx.prisma.collection.findUnique({
+      where: {
+        coinId_userId_condition: {
+          coinId: price.coinId,
+          condition: price.condition,
+          userId: userId
+        }
+      }
+    })
+
+    return result?.count ? result.count : 0;
   }
 
 }

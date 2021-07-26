@@ -20,7 +20,8 @@ import { Coin, NestedCoinCreateInput, Filters } from "./coin";
 import { Context } from "./context";
 import { User } from "./user";
 import { PreparedFilter, PreparedOneElemFilter } from "./common";
-import { result } from "lodash";
+import { Condition } from "src/utils/types";
+
 
 
 @ObjectType()
@@ -33,6 +34,9 @@ class Collection {
 
   @Field()
   userId: string
+
+  @Field()
+  condition: Condition
 }
 
 interface Filter {
@@ -48,6 +52,9 @@ export class newCollectionInput {
 
   @Field()
   coin: NestedCoinCreateInput
+
+  @Field()
+  condition: Condition
 }
 
 @InputType()
@@ -117,9 +124,10 @@ export class CollectionResolver {
     const id = ctx.session?.user?.id as string;
     return await ctx.prisma.collection.upsert({
       where: {
-        coinId_userId: {
+        coinId_userId_condition: {
           userId: id,
-          coinId: input.coin.connect.id
+          coinId: input.coin.connect.id,
+          condition: input.condition
         }
       },
       update: { count: input.count },

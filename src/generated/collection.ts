@@ -20,6 +20,7 @@ export interface collection_collectionOfUser_coin_prices {
   condition: Condition;
   price: number;
   currency: collection_collectionOfUser_coin_prices_currency;
+  count: number;
 }
 
 export interface collection_collectionOfUser_coin {
