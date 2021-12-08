@@ -1,10 +1,14 @@
 import _ from 'lodash';
-import { filterDefault } from "src/const";
-import { Chip, Model } from "./types";
+import { filterDefault } from 'src/const';
+import { Chip, Model } from './types';
 import { CoinFilter } from 'src/schema/collection';
 import { Filters } from 'src/schema/coin';
 
-const parsefiltersForQuery = (mode: Model, filters: Chip[], inputValue: string): CoinFilter | Filters => {
+const parsefiltersForQuery = (
+	mode: Model,
+	filters: Chip[] = [],
+	inputValue: string = '',
+): CoinFilter | Filters => {
 	const countryCode: string[] = [];
 	const nameCollectionCode: number[] = [];
 
@@ -15,19 +19,17 @@ const parsefiltersForQuery = (mode: Model, filters: Chip[], inputValue: string):
 
 	const finalFilter = filterDefault(inputValue, mode);
 
-	if (mode === Model.Coin) { if (countryCode.length) _.set(finalFilter, 'country.code.in', countryCode) }
-	else
-		if (countryCode.length) _.set(finalFilter, 'coin.country.code.in', countryCode);
+	if (mode === Model.Coin) {
+		if (countryCode.length) _.set(finalFilter, 'country.code.in', countryCode);
+	} else if (countryCode.length) _.set(finalFilter, 'coin.country.code.in', countryCode);
 
 	if (mode === Model.Coin) {
-		if (nameCollectionCode.length)
-			_.set(finalFilter, 'NameCollection.id.in', nameCollectionCode)
-	}
-	else if (nameCollectionCode.length)
+		if (nameCollectionCode.length) _.set(finalFilter, 'NameCollection.id.in', nameCollectionCode);
+	} else if (nameCollectionCode.length)
 		_.set(finalFilter, 'coin.NameCollection.id.in', nameCollectionCode);
 
-	console.log("finalFilter", finalFilter);
+	console.log('finalFilter', finalFilter);
 	return finalFilter;
 };
 
-export default parsefiltersForQuery
+export default parsefiltersForQuery;

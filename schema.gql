@@ -13,6 +13,7 @@ input ArrayNumber {
 
 type Coin {
   NameCollectionId: Float!
+  circulation: Int!
   count: Int!
   country: Country!
   createdAt: DateTime!
@@ -98,6 +99,11 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+type Edge {
+  cursor: String!
+  node: Coin!
+}
+
 input Filters {
   AND: [Filters!]
   NameCollection: NameCollectionWhereIdInput
@@ -179,6 +185,7 @@ input NestedMintCreateInput {
 }
 
 input NewCoinInput {
+  circulation: Int!
   country: NestedCountyCreateInput!
   currency: NestedCurrencyCreateInput!
   current: Boolean!
@@ -202,6 +209,11 @@ input NewUserInput {
   confirmPassword: String!
   email: String!
   password: String!
+}
+
+type PageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
 }
 
 type PreparedFilter {
@@ -231,7 +243,7 @@ type Query {
   countries: [Country!]!
   country(code: String!): Country!
   currencies: [Currency!]!
-  getCoins(filters: Filters!): [Coin!]!
+  getCoins(filters: RequestCoin!): Response!
   getFavoriteCoin: [Coin!]!
   getFiltersFromCoins: PreparedFilter!
   getFiltersFromCoinsOfUser: PreparedFilter!
@@ -242,6 +254,17 @@ type Query {
   searchCountry(search: String!): [Country!]!
   user(id: String!): User!
   userInfoCoin: [DataUserCollection!]!
+}
+
+input RequestCoin {
+  after: String
+  filter: Filters!
+  first: Float!
+}
+
+type Response {
+  edges: [Edge!]!
+  pageInfo: PageInfo!
 }
 
 type User {

@@ -9,7 +9,7 @@ import { Provider, getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 
 function MyApp({ Component, pageProps }: AppProps) {
-	const client = useApollo();
+	const client = useApollo(pageProps);
 	return (
 		<>
 			<ApolloProvider client={client}>

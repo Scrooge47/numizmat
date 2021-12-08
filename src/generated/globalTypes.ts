@@ -80,6 +80,7 @@ export interface NestedMintCreateInput {
 }
 
 export interface NewCoinInput {
+  circulation: number;
   country: NestedCountyCreateInput;
   currency: NestedCurrencyCreateInput;
   current: boolean;
@@ -95,6 +96,12 @@ export interface NewUserInput {
   confirmPassword: string;
   email: string;
   password: string;
+}
+
+export interface RequestCoin {
+  after?: string | null;
+  filter: Filters;
+  first: number;
 }
 
 export interface favoriteCoinInput {

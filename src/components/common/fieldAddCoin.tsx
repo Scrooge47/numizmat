@@ -86,13 +86,32 @@ const FieldAddCoin = ({ item, addCoin, model, condition, count }: IProps) => {
 					`,
 				});
 
+				let isConditionInPrices = false;
+
 				const newCachePrice = cacheCoin?.prices.map((i) => {
 					let count = i.count;
+
 					if (i.condition === condition) {
 						count = newCount;
+						isConditionInPrices = true;
 					}
+
 					return { ...i, count };
 				});
+
+				if (!isConditionInPrices) {
+					newCachePrice?.push({
+						__typename: 'Price',
+						condition,
+						currency: {
+							__typename: 'Currency',
+							code: '643',
+							name: 'Russian Ruble',
+						},
+						count: newCount,
+						price: 0,
+					});
+				}
 
 				await store.writeFragment({
 					id: `Coin:${item.id}`,

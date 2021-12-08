@@ -145,10 +145,10 @@ export class PriceResolver {
     return modelResponse
   }
 
-  @Authorized()
   @FieldResolver(returns => Number)
   async count(@Root() price: Price, @Ctx() ctx: Context) {
     const userId = ctx.session?.user.id;
+    if (!userId) return 0;
     const result = await ctx.prisma.collection.findUnique({
       where: {
         coinId_userId_condition: {

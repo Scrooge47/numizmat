@@ -8,7 +8,6 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["selectRelationCount"]
 }
 
 model User {
@@ -60,6 +59,7 @@ model Coin {
   NameCollection   NameCollection? @relation(fields: [nameCollectionId], references: [id])
   nameCollectionId Int?
   favorites        User[]          @relation("CoinUserFavorite")
+  circulation      Int             @default(0)
 
   @@map(name: "coins")
 }

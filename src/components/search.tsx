@@ -134,18 +134,22 @@ const Search = (props: IProps) => {
 					value={inputValue}
 				/>
 			</div>
-			<Divider />
-			<div className={classes.chips}>
-				{chips.map((chip) => (
-					<Chip
-						className={classes.chip}
-						deleteIcon={<CloseIcon />}
-						key={chip.id}
-						label={chip.name}
-						onDelete={() => handleChipDelete(chip)}
-					/>
-				))}
-			</div>
+			{chips.length != 0 && (
+				<>
+					<Divider />
+					<div className={classes.chips}>
+						{chips.map((chip) => (
+							<Chip
+								className={classes.chip}
+								deleteIcon={<CloseIcon />}
+								key={chip.id}
+								label={chip.name}
+								onDelete={() => handleChipDelete(chip)}
+							/>
+						))}
+					</div>
+				</>
+			)}
 			<Divider />
 			<div className={classes.selects}>
 				{selects.map((select) => (

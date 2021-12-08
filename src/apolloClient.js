@@ -8,6 +8,8 @@ const { BACKEND_URL } = publicRuntimeConfig;
 
 let apolloClient;
 
+export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
+
 function createApolloClient() {
 	return new ApolloClient({
 		ssrMode: typeof window === 'undefined',
@@ -40,7 +42,16 @@ export function initializeApollo(initialState = null) {
 	return _apolloClient;
 }
 
-export function useApollo(initialState) {
-	const store = useMemo(() => initializeApollo(initialState), [initialState]);
+export function useApollo(pageProps) {
+	const state = pageProps[APOLLO_STATE_PROP_NAME];
+	const store = useMemo(() => initializeApollo(state ), [state]);
 	return store;
+}
+
+export function addApolloState(client, pageProps) {
+	if (pageProps?.props) {
+		pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();
+	}
+
+	return pageProps;
 }

@@ -1,4 +1,7 @@
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
 	Box,
 	Button,
 	Card,
@@ -18,7 +21,7 @@ import {
 	TextField,
 	Typography,
 } from '@material-ui/core';
-import { getCoins_getCoins } from 'src/generated/getCoins';
+import { getCoins_getCoins, getCoins_getCoins_prices } from 'src/generated/getCoins';
 import { Image, Transformation } from 'cloudinary-react';
 import Link from 'next/link';
 import { useMutation } from '@apollo/client';
@@ -28,10 +31,16 @@ import {
 	addCoinToCollectionVariables,
 } from 'src/generated/addCoinToCollection';
 import FieldAddCoin from './common/fieldAddCoin';
-import { Model } from 'src/utils/types';
+import { Condition, Model } from 'src/utils/types';
+import React from 'react';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Session } from 'next-auth';
+import { session } from 'next-auth/client';
+import { getCoinsNonAuthorized_getCoins } from 'src/generated/getCoinsNonAuthorized';
 
 interface IProps {
-	item: getCoins_getCoins;
+	item: getCoins_getCoins | getCoinsNonAuthorized_getCoins;
+	isLogIn: boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -60,13 +69,55 @@ const useStyles = makeStyles((theme) => ({
 	cardMedia: {
 		textAlign: 'center',
 	},
+	accordionSummary: {
+		backgroundColor:
+			theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, .05)' : 'rgba(0, 0, 0, .03)',
+		flexDirection: 'row-reverse',
+		'& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+			transform: 'rotate(90deg)',
+		},
+		'& .MuiAccordionSummary-content': {
+			marginLeft: theme.spacing(1),
+		},
+	},
+	accordion: {
+		border: `1px solid ${theme.palette.divider}`,
+		'&:not(:last-child)': {
+			borderBottom: 0,
+		},
+		'&:before': {
+			display: 'none',
+		},
+	},
 }));
 
-const OneCoinOfList = ({ item }: IProps) => {
-	const [addCoin, data] =
-		useMutation<addCoinToCollection, addCoinToCollectionVariables>(ADD_COIN_TO_COLLECTION);
-	const classes = useStyles();
+const addEmptyConditionInListPrices = (
+	prices: getCoins_getCoins_prices[],
+): getCoins_getCoins_prices[] => {
+	const fullPrices: getCoins_getCoins_prices[] = [];
+	for (const value in Condition) {
+		const res = prices.find((i) => i.condition == value);
+		if (!res) {
+			fullPrices.push({
+				condition: Condition[value],
+				price: 0,
+				count: 0,
+				currency: undefined,
+			});
+		} else fullPrices.push(res);
+	}
 
+	return fullPrices;
+};
+
+const OneCoinOfList = ({ item, isLogIn }: IProps) => {
+	const [addCoin, data] = useMutation<addCoinToCollection, addCoinToCollectionVariables>(
+		ADD_COIN_TO_COLLECTION,
+	);
+	const classes = useStyles();
+	const { prices } = item;
+
+	const allPrices = addEmptyConditionInListPrices(prices);
 	return (
 		<Card className={classes.root}>
 			<Typography className={classes.cardHeader} variant="h6" color="textPrimary" gutterBottom>
@@ -96,9 +147,12 @@ const OneCoinOfList = ({ item }: IProps) => {
 				<Typography variant={'caption'} component="div">
 					{item.current ? `В обращении` : `Не принимается`}
 				</Typography>
-				<Typography variant="body2" color="textPrimary" className={classes.content}>
-					{item.description}
+				<Typography variant={'caption'} component="div">
+					{`Тираж: ${item.circulation}`}
 				</Typography>
+				{/* <Typography variant="body2" color="textPrimary" className={classes.content}>
+					{item.description}
+				</Typography> */}
 			</CardContent>
 			<CardActions>
 				{/* <Grid container direction="row" justify="space-between">
@@ -133,34 +187,47 @@ const OneCoinOfList = ({ item }: IProps) => {
 				{/* <Button size="small">
 					<Link href={`/coins/${item.id}/edit`}>Редактировать</Link>
 				</Button> */}
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Состояние</TableCell>
-							<TableCell align="right">Цена</TableCell>
-							<TableCell align="center">Количество</TableCell>
-							{/* <TableCell>В</TableCell> */}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{item.prices.map((price, index) => (
-							<TableRow key={index}>
-								<TableCell>{price.condition}</TableCell>
-								<TableCell align="right">{price.price}</TableCell>
-								<TableCell align="center">
-									<FieldAddCoin
-										addCoin={addCoin}
-										item={item}
-										model={Model.Coin}
-										condition={price.condition}
-										count={price.count}
-									/>
-								</TableCell>
-								{/* <TableCell align="right">{price.currency.name}</TableCell> */}
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
+				<Accordion className={classes.accordion}>
+					<AccordionSummary
+						className={classes.accordionSummary}
+						expandIcon={<ExpandMoreIcon />}
+						aria-controls="panel1a-content"
+						id="panel1a-header">
+						<Typography>Оценка монет</Typography>
+					</AccordionSummary>
+					<AccordionDetails>
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell>Состояние</TableCell>
+									<TableCell align="right">Цена</TableCell>
+									{isLogIn && <TableCell align="center">Количество</TableCell>}
+									{/* <TableCell>В</TableCell> */}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{allPrices.map((price, index) => (
+									<TableRow key={index}>
+										<TableCell>{price.condition}</TableCell>
+										<TableCell align="right">{price.price}</TableCell>
+										{isLogIn && (
+											<TableCell align="center">
+												<FieldAddCoin
+													addCoin={addCoin}
+													item={item}
+													model={Model.Coin}
+													condition={price.condition}
+													count={price.count}
+												/>
+											</TableCell>
+										)}
+										{/* <TableCell align="right">{price.currency.name}</TableCell> */}
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</AccordionDetails>
+				</Accordion>
 			</CardActions>
 		</Card>
 	);
